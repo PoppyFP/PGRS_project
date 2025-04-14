@@ -21,22 +21,30 @@ df['geometry'] = df['geometry'].apply(Point)
 #Uncomment below to show the CSV data, which should now have an added 'geometry' column with POINT (X, Y) in for each row
 #print(df)
 
-#Uncomment below to delete the seperate 'X' and 'Y' columns, as they are now extraneous
+#Uncomment below to delete the separate 'X' and 'Y' columns, as they are now extraneous
 #del df['X'], df['Y']
 
 #Create a GeoDataFrame from the DataFrame
 gdf_nit = gpd.GeoDataFrame(df)
 gdf_acid = gpd.GeoDataFrame(df)
 
-del gdf_nit['Grid_data_Acid_dep']
-del gdf_acid['Grid_data_Nit_dep']
+#Select data over 0.1% and create new GeoDataFrames with the selected values
+selected_rows_nit = gdf_nit[gdf_nit['Grid_data_Nit_dep'] > 0.1]
+gdf_nit_select = gpd.GeoDataFrame(selected_rows_nit)
+
+selected_rows_acid = gdf_acid[gdf_acid['Grid_data_Acid_dep'] > 0.1]
+gdf_acid_select = gpd.GeoDataFrame(selected_rows_acid)
+
+#Delete the acid data from the nitrogen dataset and the nitrogen data from the acid dataset
+del gdf_nit_select['Grid_data_Acid_dep']
+del gdf_acid_select['Grid_data_Nit_dep']
 
 #Set GeoDataFrame CRS to EPSG:27700 (OSGB36/British National Grid)
-gdf_nit = gdf_nit.set_crs("EPSG:27700")
-gdf_acid = gdf_acid.set_crs("EPSG:27700")
+gdf_nit_select = gdf_nit_select.set_crs("EPSG:27700")
+gdf_acid_select = gdf_acid_select.set_crs("EPSG:27700")
 
 #Save GeoDataFrame to geopackage
-gdf_nit.to_file('AQ_points_nit.gpkg')
-gdf_acid.to_file('AQ_points_acid.gpkg')
+gdf_nit_select.to_file('AQ_points_nit_0.1.gpkg')
+gdf_acid_select.to_file('AQ_points_acid_0.1.gpkg')
 
 #Next step: spatial join
