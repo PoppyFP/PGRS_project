@@ -25,12 +25,18 @@ df['geometry'] = df['geometry'].apply(Point)
 #del df['X'], df['Y']
 
 #Create a GeoDataFrame from the DataFrame
-gdf = gpd.GeoDataFrame(df)
+gdf_nit = gpd.GeoDataFrame(df)
+gdf_acid = gpd.GeoDataFrame(df)
+
+del gdf_nit['Grid_data_Acid_dep']
+del gdf_acid['Grid_data_Nit_dep']
 
 #Set GeoDataFrame CRS to EPSG:27700 (OSGB36/British National Grid)
-gdf = gdf.set_crs("EPSG:27700")
+gdf_nit = gdf_nit.set_crs("EPSG:27700")
+gdf_acid = gdf_acid.set_crs("EPSG:27700")
 
 #Save GeoDataFrame to geopackage
-gdf.to_file('AQ_points.gpkg')
+gdf_nit.to_file('AQ_points_nit.gpkg')
+gdf_acid.to_file('AQ_points_acid.gpkg')
 
 #Next step: spatial join
