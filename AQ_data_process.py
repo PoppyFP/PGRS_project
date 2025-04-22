@@ -11,21 +11,20 @@ SAC_data = gpd.read_file('NE_data/Special_Area_of_Conservation.gpkg')
 SPA_data = gpd.read_file('NE_data/Special_Protection_Areas.gpkg')
 SSSI_data = gpd.read_file('NE_data/Sites_Special_Scientific_Interest.gpkg')
 
+gdf_SAC = gpd.GeoDataFrame(SAC_data)
+
 #Add CSV of Air Quality data
 df = pd.read_csv('AQ_data.csv')
 
 #Uncomment below to show the CSV data
 #print(df)
 
-#Uncomment below to show the CSV data, which should now have an added 'geometry' column with POINT (X, Y) in for each row
-#print(df)
-
 #Create geometry from the XY data in the AQ CSV
 df['geometry'] = list(zip(df['X'], df['Y']))
 df['geometry'] = df['geometry'].apply(Point)
 
-#Uncomment below to delete the separate 'X' and 'Y' columns, as they are now extraneous
-#del df['X'], df['Y']
+#Uncomment below to show the CSV data, which should now have an added 'geometry' column with POINT (X, Y) in for each row
+#print(df)
 
 #Create a GeoDataFrame from the DataFrame
 gdf_nit = gpd.GeoDataFrame(df)
@@ -47,33 +46,34 @@ gdf_nit_select = gdf_nit_select.set_crs("EPSG:27700")
 gdf_acid_select = gdf_acid_select.set_crs("EPSG:27700")
 
 #Save GeoDataFrame to geopackage
-#gdf_nit_select.to_file('AQ_points_nit_0.1.gpkg')
-#gdf_acid_select.to_file('AQ_points_acid_0.1.gpkg')
+gdf_nit_select.to_file('AQ_points_nit_0.1.gpkg')
+gdf_acid_select.to_file('AQ_points_acid_0.1.gpkg')
+
+#Nit_data = gpd.read_file('AQ_points_nit_0.1.gpkg')
+#Acid_data = gpd.read_file('AQ_points_acid_0.1.gpkg')
 
 #Create list of protected areas for use in loop?
 #list = [SAC_data, SPA_data, SSSI_data]
 #for item in list:
     #join_list = gpd.sjoin(gdf_nit_select, )
 
-#Or join one at a time
-join_SAC_nit = gpd.sjoin(SAC_data, gdf_nit_select, how='inner', lsuffix='left', rsuffix='right')
-#print(join_SAC_nit)
+#Or join one at a time?
+#join_SAC_nit = gpd.sjoin(SAC_data, gdf_nit_select, how='inner', lsuffix='left', rsuffix='right')
 #SAC_nit = gpd.GeoDataFrame(join_SAC_nit)
-
-join_SPA_nit = gpd.sjoin(SPA_data, gdf_nit_select, how='inner', lsuffix='left', rsuffix='right')
+#join_SPA_nit = gpd.sjoin(SPA_data, gdf_nit_select, how='inner', lsuffix='left', rsuffix='right')
 #print(join_SPA_nit)
-
-join_SSSI_nit = gpd.sjoin(SSSI_data, gdf_nit_select, how='inner', lsuffix='left', rsuffix='right')
+#join_SSSI_nit = gpd.sjoin(SSSI_data, gdf_nit_select, how='inner', lsuffix='left', rsuffix='right')
 #print(join_SSSI_nit)
-
-join_SAC_acid = gpd.sjoin(SAC_data, gdf_acid_select, how='inner', lsuffix='left', rsuffix='right')
+#join_SAC_acid = gpd.sjoin(SAC_data, gdf_acid_select, how='inner', lsuffix='left', rsuffix='right')
 #print(join_SAC_acid)
-
-join_SPA_acid = gpd.sjoin(SPA_data, gdf_acid_select, how='inner', lsuffix='left', rsuffix='right')
+#join_SPA_acid = gpd.sjoin(SPA_data, gdf_acid_select, how='inner', lsuffix='left', rsuffix='right')
 #print(join_SPA_acid)
-
-join_SSSI_acid = gpd.sjoin(SSSI_data, gdf_acid_select, how='inner', lsuffix='left', rsuffix='right')
+#join_SSSI_acid = gpd.sjoin(SSSI_data, gdf_acid_select, how='inner', lsuffix='left', rsuffix='right')
 #print(join_SSSI_acid)
+
+#Or clip nitrogen and acid deposition data to protected area polygons?
+SAC_nit_clip = gdf_nit_select[gdf_nit_select.geometry.within(SAC_data)]
+print(SAC_nit_clip)
 
 #Create figures with the joined data
 uk_utm = ccrs.UTM(30)
