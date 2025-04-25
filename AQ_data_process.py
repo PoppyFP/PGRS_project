@@ -46,8 +46,8 @@ gdf_nit_select = gdf_nit_select.set_crs("EPSG:27700")
 gdf_acid_select = gdf_acid_select.set_crs("EPSG:27700")
 
 #Save GeoDataFrame to geopackage
-gdf_nit_select.to_file('AQ_points_nit_0.1.gpkg')
-gdf_acid_select.to_file('AQ_points_acid_0.1.gpkg')
+#gdf_nit_select.to_file('AQ_points_nit_0.1.gpkg')
+#gdf_acid_select.to_file('AQ_points_acid_0.1.gpkg')
 
 #Nit_data = gpd.read_file('AQ_points_nit_0.1.gpkg')
 #Acid_data = gpd.read_file('AQ_points_acid_0.1.gpkg')
@@ -72,8 +72,19 @@ gdf_acid_select.to_file('AQ_points_acid_0.1.gpkg')
 #print(join_SSSI_acid)
 
 #Or clip nitrogen and acid deposition data to protected area polygons?
-SAC_nit_clip = gdf_nit_select[gdf_nit_select.geometry.within(SAC_data)]
-print(SAC_nit_clip)
+#SAC_nit_clip = gdf_nit_select[gdf_nit_select.geometry.within(SAC_data)]
+#print(SAC_nit_clip)
+
+#SPA_nit_clip = gdf_nit_select[gdf_nit_select.geometry.within(SPA_data)]
+#print(SPA_nit_clip)
+
+clipped = []
+for ind, row in gdf_nit_select['Grid_data_Nit_dep'].unique():
+    tmp_clip = gpd.clip(SAC_data, gdf_nit_select[gdf_nit_select['Grid_data_Nit_dep'] == gdf_nit_select]) # clip the roads by county border
+    #tmp_clip['Length'] = tmp_clip['geometry'].length / 1000 # remember to update the length for any clipped roads
+    #tmp_clip['CountyName'] = county # set the county name for each road feature
+
+    clipped.append(tmp_clip)
 
 #Create figures with the joined data
 uk_utm = ccrs.UTM(30)
