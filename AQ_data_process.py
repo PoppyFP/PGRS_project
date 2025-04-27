@@ -26,7 +26,7 @@ df['geometry'] = df['geometry'].apply(Point)
 #Uncomment below to show the CSV data, which should now have an added 'geometry' column with POINT (X, Y) in for each row
 #print(df)
 
-#Create a GeoDataFrame from the DataFrame
+#Create GeoDataFrames from the DataFrames
 gdf_nit = gpd.GeoDataFrame(df)
 gdf_acid = gpd.GeoDataFrame(df)
 
@@ -53,8 +53,8 @@ gdf_acid_select = gdf_acid_select.set_crs("EPSG:27700")
 #Acid_data = gpd.read_file('AQ_points_acid_0.1.gpkg')
 
 #Create list of protected areas for use in loop?
-#list = [SAC_data, SPA_data, SSSI_data]
-#for item in list:
+#protected_areas = list(zip(SAC_data, SPA_data, SSSI_data))
+#for item in protected_areas:
     #join_list = gpd.sjoin(gdf_nit_select, )
 
 #Or join one at a time?
@@ -80,11 +80,7 @@ gdf_acid_select = gdf_acid_select.set_crs("EPSG:27700")
 
 clipped = []
 for ind, row in gdf_nit_select['Grid_data_Nit_dep'].unique():
-    tmp_clip = gpd.clip(SAC_data, gdf_nit_select[gdf_nit_select['Grid_data_Nit_dep'] == gdf_nit_select]) # clip the roads by county border
-    #tmp_clip['Length'] = tmp_clip['geometry'].length / 1000 # remember to update the length for any clipped roads
-    #tmp_clip['CountyName'] = county # set the county name for each road feature
-
-    clipped.append(tmp_clip)
+    tmp_clip = gpd.clip(SAC_data, gdf_nit_select[gdf_nit_select['Grid_data_Nit_dep'] == gdf_nit_select])
 
 #Create figures with the joined data
 uk_utm = ccrs.UTM(30)
