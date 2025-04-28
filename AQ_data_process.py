@@ -12,11 +12,9 @@ AQ_points = gpd.read_file("AQ_points.shp")
 
 SAC_AQ = gpd.clip(AQ_points, SAC_data)
 
-#print(SAC_AQ)
+#SAC_AQ.to_file('SAC_AQ.shp')
 
-#SAC_AQ.to_file('SAC_AQ')
-
-SAC_AQ_points = gpd.read_file('SAC_AQ/SAC_AQ.shp')
+SAC_AQ_points = gpd.read_file('SAC_AQ.shp')
 SAC_AQ_points.crs
 print(SAC_AQ_points.crs)
 
@@ -32,8 +30,8 @@ SAC_AQ_plot = ax.plot(SAC_AQ_points.X, SAC_AQ_points.Y, 's', color='r', ms=2, ma
 
 #SAC_AQ.plot(ax = ax, marker = 'o', color = 'royalblue', markersize = 3)
 
-xmin, ymin, xmax, ymax = SAC_data.total_bounds # using the boundary of the shapefile features, zoom the map to our area of interest
-ax.set_extent([xmin-3000, xmax+3000, ymin-3000, ymax+3000], crs=uk_utm)
+xmin, ymin, xmax, ymax = SAC_AQ_points.total_bounds
+ax.set_extent([xmin-2000, xmax+2000, ymin-2000, ymax+2000], crs=uk_utm)
 
 fig.savefig('SAC_AQ.png', bbox_inches='tight', dpi=300)
 
