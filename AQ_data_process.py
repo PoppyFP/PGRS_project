@@ -10,6 +10,7 @@ from cartopy.feature import ShapelyFeature
 #Load data
 
 Data_outline = gpd.read_file('Data_outline.shp')
+Towns = gpd.read_file('Towns.shp')
 SAC_data_full = gpd.read_file('NE_data/Special_Area_of_Conservation.gpkg')
 SPA_data_full = gpd.read_file('NE_data/Special_Protection_Areas.gpkg')
 SSSI_data_full = gpd.read_file('NE_data/Sites_Special_Scientific_Interest.gpkg')
@@ -66,6 +67,8 @@ uk_utm = ccrs.UTM(30)
 
 fig = plt.figure(figsize=(10, 10))
 ax = plt.axes(projection=uk_utm)
+
+Town_plot = ax.plot(Towns.X, Towns.Y, 'o', color='k', ms=2, markerfacecolor='k', transform=ccrs.UTM(30), zorder=2, label=Towns.Name)
 
 Outline_feature = ShapelyFeature(Data_outline['geometry'], uk_utm, edgecolor='k', facecolor='w', zorder=0)
 ax.add_feature(Outline_feature)
