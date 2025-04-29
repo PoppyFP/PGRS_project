@@ -6,6 +6,8 @@ import cartopy.crs as ccrs
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
 from cartopy.feature import ShapelyFeature
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+
 
 #Load data
 
@@ -65,10 +67,12 @@ AQ_clip_points = gpd.read_file('AQ_clipped.shp')
 
 uk_utm = ccrs.UTM(30)
 
+#Create figure and axes
+
 fig = plt.figure(figsize=(10, 10))
 ax = plt.axes(projection=uk_utm)
 
-Town_plot = ax.plot(Towns.X, Towns.Y, 'o', color='k', ms=2, markerfacecolor='k', transform=ccrs.UTM(30), zorder=2, label=Towns.Name)
+#Add data
 
 Outline_feature = ShapelyFeature(Data_outline['geometry'], uk_utm, edgecolor='k', facecolor='w', zorder=0)
 ax.add_feature(Outline_feature)
@@ -78,12 +82,10 @@ ax.add_feature(NE_feature)
 
 AQ_plot = ax.plot(AQ_clip_points.X, AQ_clip_points.Y, 'o', color='b', ms=2, markerfacecolor='b', transform=ccrs.UTM(30), zorder=2)
 
+#Set figure bounds/extents
+
 xmin, ymin, xmax, ymax = AQ_clip_points.total_bounds
 ax.set_extent([xmin-1200, xmax+1200, ymin-1200, ymax+1200], crs=uk_utm)
-
-gridlines = ax.gridlines(draw_labels=True,
-                         xlocs=[5, 10, 15, 20, 25, 30],
-                         ylocs=[54, 54.5, 55, 55.5])
 
 #Add north arrow (adapted from https://stackoverflow.com/questions/58088841/how-to-add-a-north-arrow-on-a-geopandas-map)
 
@@ -92,6 +94,8 @@ ax.annotate('N', xy=(x, y), xytext=(x, y-arrow_length),
             arrowprops=dict(facecolor='black', width=5, headwidth=15),
             ha='center', va='center', fontsize=20,
             xycoords=ax.transAxes)
+
+#Add scale bar (adapted from EGM722 Week 2: mapping with cartopy)
 
 def scale_bar(ax, length=5, location=(0.92, 0.95)):
     """
@@ -128,5 +132,14 @@ def scale_bar(ax, length=5, location=(0.92, 0.95)):
     return ax
 
 scale_bar(ax)
+
+#Add clipped OpenStreetMap basemap
+
+arr_img = plt.imread("Site_Map.png")
+im = OffsetImage(arr_img, zoom = 0.61)
+ab = AnnotationBbox(im, (0.915, 0.04), xycoords='axes fraction',box_alignment=(1.0,-0.1), zorder=0, alpha=0.6)
+ax.add_artist(ab)
+
+#Export figure
 
 fig.savefig('clipped_AQ.png', bbox_inches='tight', dpi=300)
