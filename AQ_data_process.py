@@ -8,18 +8,17 @@ import matplotlib.pyplot as plt
 from cartopy.feature import ShapelyFeature
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
-
 #Load data
 
 Data_outline = gpd.read_file('Data_outline.shp')
-Towns = gpd.read_file('Towns.shp')
 SAC_data_full = gpd.read_file('NE_data/Special_Area_of_Conservation.gpkg')
 SPA_data_full = gpd.read_file('NE_data/Special_Protection_Areas.gpkg')
 SSSI_data_full = gpd.read_file('NE_data/Sites_Special_Scientific_Interest.gpkg')
 AQ_points = gpd.read_file("AQ_points.shp")
 
-#Select_AQ_points = AQ_points[AQ_points['Grid_data_'] > 0.1]
-#print(Select_AQ_points)
+Select_AQ_points = AQ_points[AQ_points['Nit_data'] > 0.1]
+Select_AQ_points.to_file('AQ_points_nit_0.1.shp')
+Nit_data = gpd.read_file('AQ_points_nit_0.1.shp')
 
 #Clip Natural England data to the site
 
@@ -59,7 +58,7 @@ def AQ_clip (A, B, output_path):
 
 #Run AQ_clip using AQ_points and one of the Natural England datasets
 
-AQ_clip(AQ_points, SAC_data, 'AQ_clipped.shp')
+AQ_clip(Nit_data, SAC_data, 'AQ_clipped.shp')
 
 #Read saved shapefile
 
@@ -133,7 +132,7 @@ def scale_bar(ax, length=5, location=(0.92, 0.95)):
 
 scale_bar(ax)
 
-#Add clipped OpenStreetMap basemap
+#Add clipped OpenStreetMap basemap (adapted from https://stackoverflow.com/questions/65387500/insert-a-png-image-in-a-matplotlib-figure)
 
 arr_img = plt.imread("Site_Map.png")
 im = OffsetImage(arr_img, zoom = 0.61)
