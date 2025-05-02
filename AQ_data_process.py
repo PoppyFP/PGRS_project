@@ -1,20 +1,19 @@
 #Imports
-import pandas as pd
 import geopandas as gpd
-import numpy as np
 import cartopy.crs as ccrs
-from shapely.geometry import Point
 import matplotlib.pyplot as plt
 from cartopy.feature import ShapelyFeature
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 #Load data
 
-Data_outline = gpd.read_file('Data_outline.shp')
+Data_outline = gpd.read_file('Input_data/Data_outline.shp')
 SAC_data_full = gpd.read_file('NE_data/Special_Area_of_Conservation.gpkg')
 SPA_data_full = gpd.read_file('NE_data/Special_Protection_Areas.gpkg')
 SSSI_data_full = gpd.read_file('NE_data/Sites_Special_Scientific_Interest.gpkg')
-AQ_points = gpd.read_file("AQ_points.shp")
+AQ_points = gpd.read_file('Input_data/AQ_points.shp')
+
+#Select points above 0.1 (example using nitrogen data)
 
 Select_AQ_points = AQ_points[AQ_points['Nit_data'] > 0.1]
 Select_AQ_points.to_file('AQ_points_nit_0.1.shp')
@@ -40,7 +39,7 @@ SAC_data = gpd.read_file('SAC_data.shp')
 
 #Define function to clip air quality data by polygon
 
-def AQ_clip (A, B, output_path):
+def AQ_clip (A, B, output_path, output_path_2):
 
     """Clip air quality point data by protected area polygon data
 
@@ -48,17 +47,20 @@ def AQ_clip (A, B, output_path):
 
         A = point data to be clipped
         B = polygon data e.g. from natural england, Special Areas of Conservation
+        1st output path = shapefile name
+        2nd output path = csv name
         
     Returns: a GeoDataFrame of points within A which are within the selected polygon (B)"""
 
     aq_clipped = gpd.clip(A, B)
     aq_clipped.to_file(output_path)
+    aq_clipped.drop('geometry', axis=1).to_csv(output_path_2)
 
     return AQ_clip
 
 #Run AQ_clip using AQ_points and one of the Natural England datasets
 
-AQ_clip(Nit_data, SAC_data, 'AQ_clipped.shp')
+AQ_clip(Nit_data, SAC_data, 'AQ_clipped.shp', 'SAC_Nit_Data.csv')
 
 #Read saved shapefile
 
@@ -71,7 +73,7 @@ uk_utm = ccrs.UTM(30)
 fig = plt.figure(figsize=(10, 10))
 ax = plt.axes(projection=uk_utm)
 
-#Add data
+#Add data to figure
 
 Outline_feature = ShapelyFeature(Data_outline['geometry'], uk_utm, edgecolor='k', facecolor='w', zorder=0)
 ax.add_feature(Outline_feature)
@@ -134,7 +136,7 @@ scale_bar(ax)
 
 #Add clipped OpenStreetMap basemap (adapted from https://stackoverflow.com/questions/65387500/insert-a-png-image-in-a-matplotlib-figure)
 
-arr_img = plt.imread("Site_Map.png")
+arr_img = plt.imread('Input_data/Site_Map.png')
 im = OffsetImage(arr_img, zoom = 0.61)
 ab = AnnotationBbox(im, (0.915, 0.04), xycoords='axes fraction',box_alignment=(1.0,-0.1), zorder=0, alpha=0.6)
 ax.add_artist(ab)
