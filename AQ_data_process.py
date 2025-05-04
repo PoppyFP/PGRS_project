@@ -13,11 +13,11 @@ SPA_data_full = gpd.read_file('NE_data/Special_Protection_Areas.gpkg')
 SSSI_data_full = gpd.read_file('NE_data/Sites_Special_Scientific_Interest.gpkg')
 AQ_points = gpd.read_file('Input_data/AQ_points.shp')
 
-#Select points above 0.1 (example using nitrogen data)
+#Select points above 0.2 mg/m3/yr
 
-Select_AQ_points = AQ_points[AQ_points['Nit_data'] > 0.1]
-Select_AQ_points.to_file('AQ_points_nit_0.1.shp')
-Nit_data = gpd.read_file('AQ_points_nit_0.1.shp')
+Select_AQ_points = AQ_points[AQ_points['Nit_data'] > 0.2]
+Select_AQ_points.to_file('AQ_points_nit_0.2.shp')
+Nit_data = gpd.read_file('AQ_points_nit_0.2.shp')
 
 #Clip Natural England data to the site
 
