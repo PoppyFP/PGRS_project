@@ -66,6 +66,9 @@ AQ_clip(Nit_data, SAC_data, 'AQ_clipped.shp', 'SAC_Nit_Data.csv')
 
 AQ_clip_points = gpd.read_file('AQ_clipped.shp')
 
+#Uncomment to print AQ_clip_points information
+#print(AQ_clip_points)
+
 uk_utm = ccrs.UTM(30)
 
 #Create figure and axes
