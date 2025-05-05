@@ -13,7 +13,7 @@ AQ_data_nit = pd.read_csv('Input_data/AQ_data_nit.csv')
 #Create points and values
 
 points = list(zip(AQ_data_nit.X, AQ_data_nit.Y))
-values = AQ_data_nit.Grid_data_.values
+values = AQ_data_nit.Nit_data.values
 
 #Create raster interpolation, adapted from: https://hatarilabs.com/ih-en/how-to-create-a-geospatial-raster-from-xy-data-with-python-pandas-and-rasterio-tutorial
 
