@@ -172,3 +172,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+#Other attempted analysis
+AQ_kriging_attempt.py
